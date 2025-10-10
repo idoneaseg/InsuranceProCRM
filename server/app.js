@@ -36,5 +36,3 @@ const DATABASE_URL = process.env.DB_URL
 const DB_NAME = process.env.DB_NAME
 connectDB(DATABASE_URL, DB_NAME);
 
-fix: add .js extension to serverRoutes import
-

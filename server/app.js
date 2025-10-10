@@ -22,7 +22,7 @@ app.use(bodyParser.json());
 app.use("/", serverRoutes);
 
 import bodyParser from "body-parser";
-import serverRoutes from "./routes/serverRoutes";
+import serverRoutes from "./routes/serverRoutes.js";
 
 // Get port from environment and store in Express.
 const port = process.env.PORT || "5000";
@@ -35,3 +35,6 @@ app.listen(port, () => {
 const DATABASE_URL = process.env.DB_URL
 const DB_NAME = process.env.DB_NAME
 connectDB(DATABASE_URL, DB_NAME);
+
+fix: add .js extension to serverRoutes import
+

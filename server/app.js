@@ -3,7 +3,7 @@ import express from "express";
 import dotenv from "dotenv";
 dotenv.config();
 
-import connectDB from "./db/connectdb";
+import connectDB from "./db/connectdb.js";
 
 import cors from "cors";
 

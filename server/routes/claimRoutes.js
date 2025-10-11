@@ -1,13 +1,13 @@
-import { Router } from 'express';
-import Claims from '../controllers/claims'
-import auth from '../middlewares/auth';
+import { Router } from "express";
+import Claim from "../controllers/claims.js";
+import auth from "../middlewares/auth.js";
+
 const router = Router();
 
-router.get('/list', auth,Claims.index)
-router.post('/add', auth,Claims.add)
-router.get('/view/:id', auth,Claims.view)
-router.put('/edit/:id', auth,Claims.edit)
-router.delete('/delete/:id', auth,Claims.deleteData)
+router.get("/list", auth, Claim.index);
+router.post("/add", auth, Claim.add);
+router.get("/view/:id", auth, Claim.view);
+router.put("/edit/:id", auth, Claim.edit);
+router.delete("/delete/:id", auth, Claim.deleteData);
 
-
-export default router
+export default router;

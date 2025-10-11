@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import Meetings from '../controllers/meetings';
-import auth from '../middlewares/auth';
+import Meetings from '../controllers/meetings.js';
+import auth from '../middlewares/auth.js';
 const router = Router();
 
 router.get('/list', auth,Meetings.index)

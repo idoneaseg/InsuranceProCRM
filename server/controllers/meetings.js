@@ -1,4 +1,4 @@
-import Meetings from '../model/meetings.js';
+import Meetings from '../model/Meetings.js';
 
 const index = async (req, res) => {
     const query = req.query;

@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
-import Lead from "../model/lead.js";
-import Notes from "../model/notes.js";
-import Calls from "../model/calls.js";
-import Meetings from "../model/meetings.js";
-import Tasks from "../model/tasks.js";
+import Lead from "../model/Lead.js";
+import Notes from "../model/Notes.js";
+import Calls from "../model/Calls.js";
+import Meetings from "../model/Meetings.js";
+import Tasks from "../model/Tasks.js";
 import Emails from "../model/emails.js";
 
 const index = async (req, res) => {

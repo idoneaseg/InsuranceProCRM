@@ -1,5 +1,5 @@
-import Meetings from "../model/meetings.js";
-import Tasks from "../model/tasks.js";
+import Meetings from "../model/Meetings.js";
+import Tasks from "../model/Tasks.js";
 
 
 const index = async (req, res) => {

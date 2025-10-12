@@ -1,13 +1,13 @@
 
 import mongoose from 'mongoose';
-import Contact from '../model/contact.js';
+import Contact from '../model/Contact.js';
 import Policy from '../model/policy.js';
-import Task from '../model/tasks.js';
-import Meetings from '../model/meetings.js';
-import Calls from '../model/calls.js';
-import Notes from '../model/notes.js';
+import Task from '../model/Tasks.js';
+import Meetings from '../model/Meetings.js';
+import Calls from '../model/Calls.js';
+import Notes from '../model/Notes.js';
 import claim from '../model/claim.js';
-import Lead from '../model/lead.js';
+import Lead from '../model/Lead.js';
 import Emails from '../model/emails.js';
 
 const index = async (req, res) => {

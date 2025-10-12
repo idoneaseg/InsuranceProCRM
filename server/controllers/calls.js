@@ -1,4 +1,4 @@
-import Calls from "../model/calls.js";
+import Calls from "../model/Calls.js";
 
 const index = async (req, res) => {
     const query = req.query;

@@ -24,3 +24,20 @@ connectDB(DATABASE_URL, DB_NAME);
 
 // Exporta o app para ser usado no index.js
 export default app;
+
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// 📁 Caminho absoluto até ao build do frontend
+const frontendPath = path.join(__dirname, "../frontend/dist");
+
+// Servir ficheiros estáticos do React
+app.use(express.static(frontendPath));
+
+// Qualquer rota que não seja API devolve o index.html
+app.get("*", (req, res) => {
+  res.sendFile(path.join(frontendPath, "index.html"));
+});

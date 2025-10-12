@@ -1,15 +1,8 @@
 /* eslint-disable react/prop-types */
-import * as React from "react";
+import React, { useEffect, useCallback } from "react";
 import {
   Button,
   Dialog,
-  FormControl,
-  FormHelperText,
-  FormLabel,
-  Grid,
-  MenuItem,
-  Select,
-  TextField,
   DialogActions,
   DialogContent,
   DialogContentText,
@@ -20,18 +13,15 @@ import ClearIcon from "@mui/icons-material/Clear";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { toast } from "react-toastify";
-import { useEffect, useCallback } from "react";
-
 import { apiget, apipost } from "../../service/api";
-import Palette from "../../theme/palette";
 
-const Add = (props) => {
-  const { open, handleClose, setUserAction, _id } = props;
+// ----------------------------------------------------------------------
 
+const Add = ({ open, handleClose, setUserAction, _id }) => {
   const userid = localStorage.getItem("user_id");
   const userRole = localStorage.getItem("userRole");
 
-  // ----------- Validation schema
+  // ✅ Validation Schema
   const validationSchema = yup.object({
     policyType: yup.string().required("Policy Type is required"),
     policyStartDate: yup.date().required("Policy Start Date is required"),
@@ -65,7 +55,7 @@ const Add = (props) => {
     underwriterEmail: yup.string().email("Invalid email").nullable(),
   });
 
-  // ----------- Initial values
+  // ✅ Initial Values
   const initialValues = {
     policyType: "",
     policyStartDate: "",
@@ -99,11 +89,10 @@ const Add = (props) => {
     assigned_agent: userid,
   };
 
-  // ----------- API: Add policy
+  // ✅ Add Policy API
   const addPolicy = async (values) => {
     const result = await apipost("policy/add", values);
     setUserAction(result);
-
     if (result && result.status === 201) {
       toast.success(result.data.message);
       formik.resetForm();
@@ -111,16 +100,14 @@ const Add = (props) => {
     }
   };
 
-  // ----------- Formik setup
+  // ✅ Formik
   const formik = useFormik({
     initialValues,
     validationSchema,
-    onSubmit: async (values) => {
-      await addPolicy(values);
-    },
+    onSubmit: addPolicy,
   });
 
-  // ----------- API: Fetch related data (if needed)
+  // ✅ Fetch Contacts (for potential future use)
   const fetchdata = useCallback(async () => {
     await apiget(
       userRole === "admin"
@@ -137,15 +124,12 @@ const Add = (props) => {
     <Dialog
       open={open}
       onClose={handleClose}
-      aria-labelledby="scroll-dialog-title"
-      aria-describedby="scroll-dialog-description"
+      aria-labelledby="add-policy-title"
+      aria-describedby="add-policy-description"
     >
       <DialogTitle
-        id="scroll-dialog-title"
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-        }}
+        id="add-policy-title"
+        sx={{ display: "flex", justifyContent: "space-between" }}
       >
         <Typography variant="h6">Add New Policy</Typography>
         <ClearIcon onClick={handleClose} sx={{ cursor: "pointer" }} />
@@ -153,9 +137,8 @@ const Add = (props) => {
 
       <DialogContent dividers>
         <form onSubmit={formik.handleSubmit}>
-          <DialogContentText id="scroll-dialog-description" tabIndex={-1}>
-            {/* 🔹 Mantém aqui todo o conteúdo do formulário (inputs e grids) 
-                exatamente como já tinhas — este snippet só limpa estrutura e lógica */}
+          <DialogContentText id="add-policy-description" tabIndex={-1}>
+            {/* 🧩 Mantém aqui todo o conteúdo do formulário original (os inputs e grids) */}
           </DialogContentText>
         </form>
       </DialogContent>

@@ -29,7 +29,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // 🟩 Usa "dist" — é onde o Vite/React cria o build final
-const frontendPath = path.join(__dirname, "../frontend/dist");
+const frontendPath = path.join(__dirname, "../frontend/build");
 
 // Servir ficheiros estáticos do React
 app.use(express.static(frontendPath));

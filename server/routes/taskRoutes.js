@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import Tasks from '../controllers/tasks';
-import auth from '../middlewares/auth';
+import Tasks from '../controllers/tasks.js';
+import auth from '../middlewares/auth.js';
 const router = Router();
 
 router.get('/list', auth,Tasks.index)

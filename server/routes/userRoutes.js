@@ -1,5 +1,6 @@
 import { Router } from 'express';
-import Users from '../controllers/users';
+import Users from '../controllers/users.js';
+import auth from '../middlewares/auth.js';
 const router = Router();
 
 router.get('/list', Users.index)

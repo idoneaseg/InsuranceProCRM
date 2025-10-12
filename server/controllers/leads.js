@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
-import Lead from "../model/Lead";
-import Notes from "../model/Notes";
-import Calls from "../model/Calls";
-import Meetings from "../model/Meetings";
-import Tasks from "../model/Tasks";
-import Emails from "../model/emails";
+import Lead from "../model/lead.js";
+import Notes from "../model/notes.js";
+import Calls from "../model/calls.js";
+import Meetings from "../model/meetings.js";
+import Tasks from "../model/tasks.js";
+import Emails from "../model/emails.js";
 
 const index = async (req, res) => {
   const query = req.query

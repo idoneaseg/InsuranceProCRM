@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import Policy from '../controllers/policy';
-import auth from '../middlewares/auth';
-import { uploadPolicy } from '../utils/upload';
+import Policy from '../controllers/policy.js';
+import auth from '../middlewares/auth.js';
+import { uploadPolicy } from '../utils/upload.js';
 const router = Router();
 
 router.get('/list', auth,Policy.index)

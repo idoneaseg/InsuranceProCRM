@@ -1,9 +1,9 @@
 {
   "name": "@minimal/material-kit-react",
   "author": "minimals.cc",
-  "licence": "MIT",
+  "license": "MIT",
   "version": "1.7.0",
-  "homepage": ".",
+  "homepage": "/",
   "private": false,
   "engines": {
     "node": "18.x",
@@ -21,21 +21,13 @@
     "re-build": "rm -rf build node_modules && yarn install && yarn build"
   },
   "eslintConfig": {
-    "extends": [
-      "react-app"
-    ]
+    "extends": ["react-app"]
   },
   "babel": {
-    "presets": [
-      "@babel/preset-react"
-    ]
+    "presets": ["@babel/preset-react"]
   },
   "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
+    "production": [">0.2%", "not dead", "not op_mini all"],
     "development": [
       "last 1 chrome version",
       "last 1 firefox version",

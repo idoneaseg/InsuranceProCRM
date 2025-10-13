@@ -8,12 +8,7 @@ import {
   Stack,
   TextField,
 } from "@mui/material";
-import React, {
-  useEffect,
-  useRef,
-  useState,
-  useCallback,
-} from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import { useNavigate, useParams } from "react-router-dom";
 import { EmailEditor } from "react-email-editor";
@@ -31,27 +26,21 @@ const View = () => {
   const navigate = useNavigate();
   const params = useParams();
 
-  // open/close delete modal
   const handleOpenDelete = () => setOpendelete(true);
   const handleCloseDelete = () => setOpendelete(false);
 
   const saveDesign = () => {
-    if (name.trim() === "") {
+    if (!name.trim()) {
       toast.error("Template Name is required");
       return;
     }
 
-    emailEditorRef.current?.exportHtml(async (allData) => {
-      const { html, design } = allData;
-      const data = {
-        html,
-        design,
-        name,
-        modifiedOn: new Date(),
-      };
-
+    emailEditorRef.current?.exportHtml(async ({ html, design }) => {
+      const data = { html, design, name, modifiedOn: new Date() };
       const result = await apiput(`emailtemplate/edit/${params.id}`, data);
+
       if (result && result.status === 200) {
+        toast.success("Template updated successfully!");
         navigate("/dashboard/emailtemplate");
       }
     });
@@ -60,23 +49,23 @@ const View = () => {
   const togglePreview = () => {
     if (preview) {
       emailEditorRef.current?.editor?.hidePreview();
-      setPreview(false);
     } else {
       emailEditorRef.current?.editor?.showPreview("desktop");
-      setPreview(true);
     }
+    setPreview((prev) => !prev);
   };
 
   const onLoad = () => {
-    emailEditorRef.current?.editor?.loadDesign(design);
+    if (design) {
+      emailEditorRef.current?.editor?.loadDesign(design);
+    }
   };
 
-  // ✅ useCallback to fix missing dependency warning
   const fetchData = useCallback(async () => {
     const result = await apiget(`emailtemplate/view/${params.id}`);
-    if (result && result.status === 200) {
-      setDesign(result?.data?.emailtemplate?.design);
-      setName(result?.data?.emailtemplate?.name);
+    if (result?.status === 200) {
+      setDesign(result.data.emailtemplate.design);
+      setName(result.data.emailtemplate.name);
     }
   }, [params.id]);
 
@@ -85,11 +74,8 @@ const View = () => {
     navigate("/dashboard/emailtemplate");
   };
 
-  const back = () => {
-    navigate("/dashboard/emailtemplate");
-  };
+  const back = () => navigate("/dashboard/emailtemplate");
 
-  // ✅ Correct dependency array
   useEffect(() => {
     fetchData();
   }, [fetchData]);
@@ -105,53 +91,46 @@ const View = () => {
 
       <Container>
         <Grid container display="flex" alignItems="center">
-          <Grid container display="flex" alignItems="center">
-            <Stack
-              direction="row"
-              alignItems="center"
-              mb={3}
-              justifyContent="space-between"
-              width="100%"
-            >
-              <Header title="View & Edit Template" />
-              <Stack
-                direction="row"
-                alignItems="center"
-                justifyContent="flex-end"
-                spacing={2}
+          <Stack
+            direction="row"
+            alignItems="center"
+            mb={3}
+            justifyContent="space-between"
+            width="100%"
+          >
+            <Header title="View & Edit Template" />
+            <Stack direction="row" spacing={2}>
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={togglePreview}
               >
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={togglePreview}
-                >
-                  {preview ? "Hide Preview" : "Show Preview"}
-                </Button>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={saveDesign}
-                >
-                  Save
-                </Button>
-                <Button
-                  variant="contained"
-                  color="error"
-                  onClick={handleOpenDelete}
-                >
-                  Delete
-                </Button>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  startIcon={<ArrowBackIosIcon />}
-                  onClick={back}
-                >
-                  Back
-                </Button>
-              </Stack>
+                {preview ? "Hide Preview" : "Show Preview"}
+              </Button>
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={saveDesign}
+              >
+                Save
+              </Button>
+              <Button
+                variant="contained"
+                color="error"
+                onClick={handleOpenDelete}
+              >
+                Delete
+              </Button>
+              <Button
+                variant="contained"
+                color="secondary"
+                startIcon={<ArrowBackIosIcon />}
+                onClick={back}
+              >
+                Back
+              </Button>
             </Stack>
-          </Grid>
+          </Stack>
         </Grid>
 
         <FormLabel>Template Name</FormLabel>
@@ -163,12 +142,7 @@ const View = () => {
           onChange={(e) => setName(e.target.value)}
         />
 
-        <Box
-          height="680px"
-          bgcolor="gray"
-          className="editerHeight"
-          mt={1}
-        >
+        <Box height="680px" bgcolor="gray" className="editerHeight" mt={1}>
           <EmailEditor ref={emailEditorRef} onLoad={onLoad} />
         </Box>
       </Container>

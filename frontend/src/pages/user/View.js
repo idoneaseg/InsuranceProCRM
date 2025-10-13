@@ -29,7 +29,6 @@ const View = () => {
   const params = useParams();
   const userdata = JSON.parse(localStorage.getItem("user"));
 
-  // --- Handlers ---
   const handleOpenAdd = () => setOpenAdd(true);
   const handleCloseAdd = () => setOpenAdd(false);
 
@@ -43,7 +42,6 @@ const View = () => {
 
   const back = () => navigate("/dashboard/user");
 
-  // --- Fetch user data ---
   const fetchdata = useCallback(async () => {
     const result = await apiget(`user/view/${params.id}`);
     if (result && result.status === 200) {
@@ -51,7 +49,6 @@ const View = () => {
     }
   }, [params.id]);
 
-  // --- Delete user ---
   const deletedata = async () => {
     await apidelete(`user/delete/${params.id}`);
     navigate("/dashboard/user");
@@ -59,14 +56,12 @@ const View = () => {
 
   useEffect(() => {
     fetchdata();
-  }, [fetchdata, openAdd]); // ✅ fixed exhaustive-deps warning
+  }, [fetchdata, openAdd]);
 
   return (
     <div>
-      {/* Add User Modal */}
       <AddUser open={openAdd} handleClose={handleCloseAdd} />
 
-      {/* Edit User Modal */}
       <EditUser
         open={openEdit}
         handleClose={handleCloseEdit}
@@ -74,7 +69,6 @@ const View = () => {
         fetchUser={fetchdata}
       />
 
-      {/* Delete User Modal */}
       <DeleteModel
         opendelete={opendelete}
         handleClosedelete={handleCloseDelete}
@@ -121,7 +115,6 @@ const View = () => {
           </Stack>
         </Grid>
 
-        {/* Tabs */}
         <Box sx={{ width: "100%" }}>
           <Box
             sx={{

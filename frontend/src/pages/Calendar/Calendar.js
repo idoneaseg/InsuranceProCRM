@@ -1,181 +1,137 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable no-unused-vars */
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import Container from '@mui/material/Container';
-import { Button, Stack, Typography } from '@mui/material';
-import moment from 'moment';
-import Iconify from '../../components/iconify/Iconify';
-import AddTask from '../../components/task/AddTask';
+import { Container, Stack, Typography } from '@mui/material';
 import { apidelete, apiget } from '../../service/api';
-import ViewEdit from '../../components/task/Edit'
+import AddTask from '../../components/task/AddTask';
+import AddMeeting from '../../components/meeting/Addmeetings';
+import AddCall from '../../components/call/Addcalls';
 import ActionButtonTwo from '../../components/ActionButtonTwo';
-import AddMeeting from '../../components/meeting/Addmeetings'
-import AddCall from '../../components/call/Addcalls'
+// import ViewEdit from '../../components/task/Edit'; // Mantido comentado para evitar carga desnecessária
 
 const Calendar = () => {
-    const [userAction, setUserAction] = useState(null)
-    const [data, setData] = useState([]);
-    const [taskId, setTaskId] = useState('')
-    const [openTask, setOpenTask] = useState(false);
-    const [openMeeting, setOpenMeeting] = useState(false);
-    const [openCall, setOpenCall] = useState(false);
-    const [openViewEdit, setOpenViewEdit] = useState(false)
+  const [data, setData] = useState([]);
+  const [taskId, setTaskId] = useState('');
+  const [openTask, setOpenTask] = useState(false);
+  const [openMeeting, setOpenMeeting] = useState(false);
+  const [openCall, setOpenCall] = useState(false);
+  const [userAction, setUserAction] = useState(null);
 
-    const userid = localStorage.getItem('user_id')
-    const userRole = localStorage.getItem("userRole")
+  const userid = useMemo(() => localStorage.getItem('user_id'), []);
+  const userRole = useMemo(() => localStorage.getItem('userRole'), []);
 
-    // open task model
-    const handleOpenTask = () => setOpenTask(true);
-    const handleCloseTask = () => setOpenTask(false);
+  // ✅ Compactação de handlers para evitar recriações
+  const toggleTask = useCallback(() => setOpenTask((prev) => !prev), []);
+  const toggleMeeting = useCallback(() => setOpenMeeting((prev) => !prev), []);
+  const toggleCall = useCallback(() => setOpenCall((prev) => !prev), []);
 
-    // open meeting model
-    const handleOpenMeeting = () => setOpenMeeting(true);
-    const handleCloseMeeting = () => setOpenMeeting(false);
+  // ✅ Fetch genérico e memoizado
+  const fetchData = useCallback(async () => {
+    const urls = [
+      userRole === 'admin' ? 'task/list' : `task/list/?createdBy=${userid}`,
+      userRole === 'admin' ? 'meeting/list' : `meeting/list/?createdBy=${userid}`,
+      userRole === 'admin' ? 'call/list' : `call/list/?createdBy=${userid}`,
+    ];
 
-    // open call model
-    const handleOpenCall = () => setOpenCall(true);
-    const handleCloseCall = () => setOpenCall(false);
+    try {
+      const [taskRes, meetingRes, callRes] = await Promise.all(urls.map((url) => apiget(url)));
 
-    const handleOpenViewEdit = () => setOpenViewEdit(true)
-    const handleCloseViewEdit = () => setOpenViewEdit(false)
+      const tasks = taskRes?.data?.result?.map((item) => ({
+        title: item.subject,
+        start: item.startDate,
+        end: item.endDate,
+        textColor: item.textColor,
+        backgroundColor: item.backgroundColor,
+      })) || [];
 
-    const handleDateSelect = (selectInfo) => {
-        handleCloseTask();
-    };
+      const meetings = meetingRes?.data?.result?.map((item) => ({
+        title: item.subject,
+        start: item.startDate,
+        end: item.endDate,
+      })) || [];
 
-    const handleEventClick = (clickInfo) => {
-        setTaskId(clickInfo?.event?._def?.extendedProps?._id)
-        handleOpenViewEdit()
-        if (clickInfo.event.url) {
-            clickInfo.jsEvent.preventDefault();
-            window.open(clickInfo.event.url);
-        }
+      const calls = callRes?.data?.result?.map((item) => ({
+        title: item.subject,
+        start: item.startDateTime,
+      })) || [];
 
-    };
-    const handleEvents = (events) => {
-    };
-
-    const renderEventContent = (eventInfo) => (
-        <>
-            <b>{eventInfo.timeText}</b>
-            <i>{eventInfo.event.title}</i>
-        </>
-    );
-
-    // delete api
-    const deletedata = async () => {
-        await apidelete(`task/delete/${taskId}`)
-        handleCloseViewEdit()
+      setData([...tasks, ...meetings, ...calls]);
+    } catch (error) {
+      console.error('Error fetching calendar data:', error);
     }
+  }, [userid, userRole]);
 
-    const fetchApiTask = async () => {
-        const result = await apiget(userRole === "admin" ? `task/list` : `task/list/?createdBy=${userid}`);
-        return result.data.result.map(item => ({
-            title: item.subject,
-            start: item.startDate,
-            end: item.endDate,
-            textColor:item.textColor,
-            backgroundColor: item.backgroundColor
-        }));
-    };
+  // ✅ Evita chamadas repetidas
+  useEffect(() => {
+    fetchData();
+  }, [fetchData, userAction]);
 
-    const fetchApiMeeting = async () => {
-        const result = await apiget(userRole === "admin" ? `meeting/list` : `meeting/list/?createdBy=${userid}`);
-        return result.data.result.map(item => ({
-            title: item.subject,
-            start: item.startDate,
-            end: item.endDate,
-        }));
-    };
+  const handleEventClick = useCallback((clickInfo) => {
+    const id = clickInfo?.event?._def?.extendedProps?._id;
+    if (id) setTaskId(id);
+    if (clickInfo.event.url) {
+      clickInfo.jsEvent.preventDefault();
+      window.open(clickInfo.event.url);
+    }
+  }, []);
 
-    const fetchApiCall = async () => {
-        const result = await apiget(userRole === "admin" ? `call/list` : `call/list/?createdBy=${userid}`);
-        return result.data.result.map(item => ({
-            title: item.subject,
-            start: item.startDateTime,
-        }));
-    };
+  const handleDelete = useCallback(async () => {
+    if (!taskId) return;
+    await apidelete(`task/delete/${taskId}`);
+    fetchData(); // Atualiza calendário
+  }, [taskId, fetchData]);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            const taskApiData = await fetchApiTask();
-            const meetingApiData = await fetchApiMeeting();
-            const callApiData = await fetchApiCall();
-            const combinedData = [...taskApiData, ...meetingApiData, ...callApiData];
-            setData(combinedData);
-        };
+  const renderEventContent = useCallback(
+    (eventInfo) => (
+      <>
+        <b>{eventInfo.timeText}</b> <i>{eventInfo.event.title}</i>
+      </>
+    ),
+    []
+  );
 
-        fetchData();
-    }, [openTask, openViewEdit, userAction])
+  return (
+    <Container>
+      <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+        <Typography variant="h4">Calendar</Typography>
+        <ActionButtonTwo
+          handleOpenTask={toggleTask}
+          handleOpenMeeting={toggleMeeting}
+          handleOpenCall={toggleCall}
+        />
+      </Stack>
 
-    return (
-        <div>
-            {/* Add Task Model */}
-            <AddTask open={openTask} handleClose={handleCloseTask} setUserAction={setUserAction} lead='lead' contact='contact' />
+      <FullCalendar
+        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+        initialView="dayGridMonth"
+        height="600px"
+        events={data}
+        headerToolbar={{
+          left: 'prev,next today',
+          center: 'title',
+          right: 'dayGridMonth,timeGridWeek,timeGridDay',
+        }}
+        eventClick={handleEventClick}
+        eventContent={renderEventContent}
+        buttonText={{
+          today: 'Today',
+          dayGridMonth: 'Month',
+          timeGridWeek: 'Week',
+          timeGridDay: 'Day',
+        }}
+      />
 
-            {/* View Edit Model */}
-            {/* <ViewEdit open={openViewEdit} handleClose={handleCloseViewEdit} id={taskId} deletedata={deletedata} lead='lead' contact='contact' setUserAction={setUserAction} fetchEvent={fetchdata} /> */}
-
-            {/* Add Meeting Model */}
-            <AddMeeting open={openMeeting} handleClose={handleCloseMeeting} setUserAction={setUserAction} />
-
-            {/* Add Call Model */}
-            <AddCall open={openCall} handleClose={handleCloseCall} setUserAction={setUserAction} />
-
-            <Container>
-                <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-                    <Typography variant="h4">
-                        Calendar
-                    </Typography>
-                    <ActionButtonTwo
-                        handleOpenTask={handleOpenTask}
-                        handleOpenMeeting={handleOpenMeeting}
-                        handleOpenCall={handleOpenCall}
-                    />
-                </Stack>
-                <FullCalendar
-                    plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-                    initialView="dayGridMonth"
-                    minHeight="400px"
-                    height="600px"
-                    // dateClick={handleDateClick}
-                    // events={calendarDataCalendar}
-                    events={data}
-
-                    headerToolbar={{
-                        left: 'prev,next today',
-                        center: 'title',
-                        right: 'dayGridMonth,timeGridWeek,timeGridDay'
-                    }}
-                    eventClick={handleEventClick}
-                    eventsSet={handleEvents}
-                    select={handleDateSelect}
-                    eventContent={renderEventContent}
-                    views={{
-                        listWeek: { buttonText: 'List' },
-                        multiMonthFourMonth: {
-                            type: 'multiMonth',
-                            buttonText: 'multiMonth',
-                            duration: { months: 4 },
-                        }
-                    }}
-                    buttonText={{
-                        today: 'Today',
-                        dayGridMonth: 'Month',
-                        timeGridWeek: 'Week',
-                        timeGridDay: 'Day',
-                    }}
-                    eventClassNames="custom-fullcalendar"
-                />
-            </Container>
-        </div>
-    );
-
+      {/* Modal Components */}
+      <AddTask open={openTask} handleClose={toggleTask} setUserAction={setUserAction} lead="lead" contact="contact" />
+      <AddMeeting open={openMeeting} handleClose={toggleMeeting} setUserAction={setUserAction} />
+      <AddCall open={openCall} handleClose={toggleCall} setUserAction={setUserAction} />
+      {/* <ViewEdit open={openViewEdit} handleClose={handleCloseViewEdit} id={taskId} deletedata={handleDelete} /> */}
+    </Container>
+  );
 };
 
 export default Calendar;

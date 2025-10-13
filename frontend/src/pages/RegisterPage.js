@@ -9,6 +9,7 @@ import useResponsive from '../hooks/useResponsive';
 import Logo from '../components/logo';
 // sections
 import { RegisterForm } from '../sections/auth/register';
+
 // ----------------------------------------------------------------------
 
 const StyledRoot = styled('div')(({ theme }) => ({
@@ -45,7 +46,7 @@ export default function RegisterPage() {
   return (
     <>
       <Helmet>
-        <title> Register | Minimal UI </title>
+        <title> Register | InsurancePro CRM </title>
       </Helmet>
 
       <StyledRoot>
@@ -59,9 +60,11 @@ export default function RegisterPage() {
 
         {mdUp && (
           <StyledSection>
+            {/* ✅ Imagem convertida para .webp e com carregamento lazy */}
             <img
-              src="/assets/illustrations/illustration_register.jpg"
+              src="/assets/illustrations/illustration_register.webp"
               alt="register"
+              loading="lazy"
             />
           </StyledSection>
         )}
@@ -69,7 +72,7 @@ export default function RegisterPage() {
         <Container maxWidth="sm">
           <StyledContent>
             <Typography variant="h4" gutterBottom>
-              Sign up to Minimal
+              Sign up to InsurancePro CRM
             </Typography>
 
             <Typography variant="body2" sx={{ mb: 5 }}>

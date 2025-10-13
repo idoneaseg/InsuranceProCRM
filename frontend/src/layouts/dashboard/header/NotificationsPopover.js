@@ -30,7 +30,7 @@ import Scrollbar from '../../../components/scrollbar';
 
 const NOTIFICATIONS = [
   {
-    id: faker.datatype.uuid(),
+    id: faker.string.uuid(),
     title: 'Your order is placed',
     description: 'waiting for shipping',
     avatar: null,
@@ -39,8 +39,8 @@ const NOTIFICATIONS = [
     isUnRead: true,
   },
   {
-    id: faker.datatype.uuid(),
-    title: faker.name.fullName(),
+    id: faker.string.uuid(),
+    title: faker.person.fullName(),
     description: 'answered to your comment on the Minimal',
     avatar: '/assets/images/avatars/avatar_2.jpg',
     type: 'friend_interactive',
@@ -48,7 +48,7 @@ const NOTIFICATIONS = [
     isUnRead: true,
   },
   {
-    id: faker.datatype.uuid(),
+    id: faker.string.uuid(),
     title: 'You have new message',
     description: '5 unread messages',
     avatar: null,
@@ -57,7 +57,7 @@ const NOTIFICATIONS = [
     isUnRead: false,
   },
   {
-    id: faker.datatype.uuid(),
+    id: faker.string.uuid(),
     title: 'You have new mail',
     description: 'sent from Guido Padberg',
     avatar: null,
@@ -66,7 +66,7 @@ const NOTIFICATIONS = [
     isUnRead: false,
   },
   {
-    id: faker.datatype.uuid(),
+    id: faker.string.uuid(),
     title: 'Delivery processing',
     description: 'Your order is being shipped',
     avatar: null,
@@ -76,25 +76,22 @@ const NOTIFICATIONS = [
   },
 ];
 
+// ----------------------------------------------------------------------
+
 export default function NotificationsPopover() {
   const [notifications, setNotifications] = useState(NOTIFICATIONS);
 
-  const totalUnRead = notifications.filter((item) => item.isUnRead === true).length;
+  const totalUnRead = notifications.filter((item) => item.isUnRead).length;
 
   const [open, setOpen] = useState(null);
 
-  const handleOpen = (event) => {
-    setOpen(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setOpen(null);
-  };
+  const handleOpen = (event) => setOpen(event.currentTarget);
+  const handleClose = () => setOpen(null);
 
   const handleMarkAllAsRead = () => {
-    setNotifications(
-      notifications.map((notification) => ({
-        ...notification,
+    setNotifications((prev) =>
+      prev.map((n) => ({
+        ...n,
         isUnRead: false,
       }))
     );
@@ -131,7 +128,7 @@ export default function NotificationsPopover() {
           </Box>
 
           {totalUnRead > 0 && (
-            <Tooltip title=" Mark all as read">
+            <Tooltip title="Mark all as read">
               <IconButton color="primary" onClick={handleMarkAllAsRead}>
                 <Iconify icon="eva:done-all-fill" />
               </IconButton>
@@ -194,6 +191,8 @@ NotificationItem.propTypes = {
     avatar: PropTypes.any,
   }),
 };
+
+// ----------------------------------------------------------------------
 
 function NotificationItem({ notification }) {
   const { avatar, title } = renderContent(notification);
@@ -269,6 +268,7 @@ function renderContent(notification) {
       title,
     };
   }
+
   return {
     avatar: notification.avatar ? <img alt={notification.title} src={notification.avatar} /> : null,
     title,

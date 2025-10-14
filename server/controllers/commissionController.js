@@ -1,4 +1,4 @@
-import CommissionLevel from "../models/CommissionLevel.js";
+import CommissionLevel from "../model/CommissionLevel.js";
 
 // 📍 Criar novo nível de comissão
 export const createCommissionLevel = async (req, res) => {

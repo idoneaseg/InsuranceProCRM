@@ -1,10 +1,14 @@
 // server/index.js
 import dotenv from "dotenv";
 import app from "./app.js";
+import commissionRoutes from "./routes/commissionRoutes.js";
 
 dotenv.config();
 
 const PORT = process.env.PORT || 5000;
+
+// ✅ Rota principal para níveis de comissão
+app.use("/api/commissions", commissionRoutes);
 
 // 🚀 Inicializa o servidor Express
 const server = app.listen(PORT, () => {

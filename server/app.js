@@ -2,9 +2,8 @@ import express from "express";
 import dotenv from "dotenv";
 import connectDB from "./db/connectdb.js";
 import cors from "cors";
-import bodyParser from "body-parser";
 import serverRoutes from "./routes/serverRoutes.js";
-import commissionRoutes from "./routes/commissionRoutes.js"; // 🆕 Importar rotas de comissões
+import commissionRoutes from "./routes/commissionRoutes.js";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -14,8 +13,8 @@ const app = express();
 
 // 🧩 Middleware base
 app.use(cors());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json()); // ✅ Substitui body-parser.json()
+app.use(express.urlencoded({ extended: true })); // ✅ Substitui body-parser.urlencoded()
 
 // 🗄️ Conexão à base de dados
 const DATABASE_URL = process.env.DB_URL;

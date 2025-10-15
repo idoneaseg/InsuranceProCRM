@@ -1,18 +1,44 @@
-import jwt from 'jsonwebtoken'
+// server/middlewares/auth.js
+import jwt from "jsonwebtoken";
+import User from "../model/User.js";
 
-const auth = (req, res, next) => {
-    const token = req.headers.authorization;
-    
-    if (!token) {
-        res.status(401).json({ message: "Authentication failed , Token missing" });
-    }
-    try {
-        const decode = jwt.verify(token, 'secret_key')
-        req.user = decode
-        next();
-    } catch (err) {
-        res.status(500).json({ message: 'Authentication failed. Invalid token.' })
-    }
-}
+//
+// ✅ Middleware principal de autenticação
+//
+const auth = async (req, res, next) => {
+  try {
+    const authHeader = req.headers.authorization;
 
-export default auth
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({ message: "Acesso negado. Token não fornecido." });
+    }
+
+    const token = authHeader.split(" ")[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || "segredo_acesso_123");
+
+    const user = await User.findById(decoded.userId).select("-password");
+    if (!user) {
+      return res.status(401).json({ message: "Utilizador não encontrado." });
+    }
+
+    req.user = user;
+    next();
+  } catch (error) {
+    console.error("❌ Erro de autenticação:", error);
+    res.status(403).json({ message: "Token inválido ou expirado." });
+  }
+};
+
+//
+// ✅ Middleware adicional de autorização (por papéis/roles)
+//
+export const authorizeRoles = (...allowedRoles) => {
+  return (req, res, next) => {
+    if (!req.user || !allowedRoles.includes(req.user.role)) {
+      return res.status(403).json({ message: "Acesso negado. Permissão insuficiente." });
+    }
+    next();
+  };
+};
+
+export default auth;

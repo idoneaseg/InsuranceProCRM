@@ -6,12 +6,12 @@ const userSchema = new mongoose.Schema(
   {
     // 🧑‍💼 Dados básicos
     name: { type: String, required: true, trim: true },
-    email: { 
-      type: String, 
-      required: true, 
-      unique: true, 
-      lowercase: true, 
-      trim: true 
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
     },
     password: { type: String, required: true },
     phone: { type: String, default: null },
@@ -54,6 +54,9 @@ const userSchema = new mongoose.Schema(
 
     // ⚙️ Configurações específicas
     canManageOwnLeads: { type: Boolean, default: true },
+
+    // 🔄 Refresh Token (para autenticação JWT segura)
+    refreshToken: { type: String, default: null },
 
     // 🕵️‍♂️ Auditoria
     createdBy: {

@@ -1,3 +1,4 @@
+// server/routes/serverRoutes.js
 import express from "express";
 const router = express.Router();
 
@@ -16,19 +17,20 @@ import PolicyDocumentRoute from "./policyDocumentRoutes.js";
 import EmailTemplateRoute from "./emailTemplateRoutes.js";
 import commissionRoutes from "./commissionRoutes.js";
 
-router.use("/lead", LeadRoute);
-router.use("/contact", ContactRoute);
-router.use("/claim", ClaimRoute);
-router.use("/note", NoteRoute);
-router.use("/call", CallRoute);
-router.use("/meeting", MeetingRoute);
-router.use("/email", EmailRoute);
-router.use("/task", TaskRoute);
-router.use("/user", UserRoute);
-router.use("/policy", PolicyRoute);
-router.use("/document", DocumentRoute);
-router.use("/policydocument", PolicyDocumentRoute);
-router.use("/emailtemplate", EmailTemplateRoute);
+// ✅ Rotas principais da API
+router.use("/leads", LeadRoute);
+router.use("/contacts", ContactRoute);
+router.use("/claims", ClaimRoute);
+router.use("/notes", NoteRoute);
+router.use("/calls", CallRoute);
+router.use("/meetings", MeetingRoute);
+router.use("/emails", EmailRoute);
+router.use("/tasks", TaskRoute);
+router.use("/users", UserRoute); // 🔥 Corrigido: era "/user"
+router.use("/policies", PolicyRoute);
+router.use("/documents", DocumentRoute);
+router.use("/policy-documents", PolicyDocumentRoute);
+router.use("/email-templates", EmailTemplateRoute);
 router.use("/commissions", commissionRoutes);
 
 export default router;

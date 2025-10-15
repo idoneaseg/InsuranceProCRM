@@ -14,6 +14,7 @@ import PolicyRoute from "./policyRoutes.js";
 import DocumentRoute from "./documentRoutes.js";
 import PolicyDocumentRoute from "./policyDocumentRoutes.js";
 import EmailTemplateRoute from "./emailTemplateRoutes.js";
+import commissionRoutes from "./commissionRoutes.js";
 
 router.use("/lead", LeadRoute);
 router.use("/contact", ContactRoute);
@@ -28,5 +29,6 @@ router.use("/policy", PolicyRoute);
 router.use("/document", DocumentRoute);
 router.use("/policydocument", PolicyDocumentRoute);
 router.use("/emailtemplate", EmailTemplateRoute);
+router.use("/commissions", commissionRoutes);
 
 export default router;

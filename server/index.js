@@ -1,26 +1,18 @@
-// server/index.js
 import dotenv from "dotenv";
 import app from "./app.js";
-import commissionRoutes from "./routes/commissionRoutes.js";
 
 dotenv.config();
 
 const PORT = process.env.PORT || 5000;
 
-// ✅ Rota principal para níveis de comissão
-app.use("/api/commissions", commissionRoutes);
-
-// 🚀 Inicializa o servidor Express
 const server = app.listen(PORT, () => {
   console.log(`✅ Server running on port ${PORT}`);
 });
 
-// ⚙️ Tratamento de erro caso a porta já esteja em uso
 server.on("error", (err) => {
   if (err.code === "EADDRINUSE") {
     const fallbackPort = 5050;
     console.warn(`⚠️ Port ${PORT} is in use. Trying fallback port ${fallbackPort}...`);
-
     app.listen(fallbackPort, () => {
       console.log(`✅ Server running on fallback port ${fallbackPort}`);
     });

@@ -1,47 +1,48 @@
-// server/models/CommissionLevel.js
+// server/model/CommissionLevel.js
 import mongoose from "mongoose";
 
 const commissionLevelSchema = new mongoose.Schema(
   {
-    // 🔹 Nome do patamar (ex: Bronze, Prata, Ouro, Platina, etc.)
+    // 🏷️ Nome do nível (ex: "Bronze", "Prata", "Ouro", "Diretor")
     name: {
       type: String,
-      required: true,
+      required: [true, "O nome do nível é obrigatório."],
       unique: true,
       trim: true,
     },
 
-    // 💸 Percentagem de comissão principal
+    // 💰 Percentagem base de comissão (0–100)
     baseRate: {
       type: Number,
-      required: true,
-      min: 0,
-      max: 100,
+      required: [true, "A taxa base é obrigatória."],
+      min: [0, "A taxa base não pode ser negativa."],
+      max: [100, "A taxa base não pode exceder 100%."],
     },
 
-    // 📈 Percentagem adicional (ex: bónus de desempenho, override, etc.)
+    // 🎯 Bónus adicional (opcional)
     bonusRate: {
       type: Number,
       default: 0,
-      min: 0,
-      max: 100,
+      min: [0, "O bónus não pode ser negativo."],
+      max: [100, "O bónus não pode exceder 100%."],
     },
 
-    // 🔗 Hierarquia do nível (quanto mais baixo, mais alto é o nível)
+    // 🥇 Ordem hierárquica (menor número = nível mais alto)
     rank: {
       type: Number,
-      required: true,
+      required: [true, "O campo rank é obrigatório."],
+      min: [1, "O rank deve ser pelo menos 1."],
       unique: true,
     },
 
-    // 🧾 Descrição opcional
+    // 📝 Descrição (opcional)
     description: {
       type: String,
       default: "",
       trim: true,
     },
 
-    // ⚙️ Indica se o nível está ativo
+    // ⚙️ Ativo / Inativo (para soft delete)
     active: {
       type: Boolean,
       default: true,
@@ -50,5 +51,10 @@ const commissionLevelSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// 🔎 Índice para busca rápida por rank e nome
+commissionLevelSchema.index({ rank: 1 });
+commissionLevelSchema.index({ name: 1 });
+
+// 🧩 Modelo
 const CommissionLevel = mongoose.model("CommissionLevel", commissionLevelSchema);
 export default CommissionLevel;

@@ -11,6 +11,6 @@ const router = express.Router();
 router.post("/", createCommissionLevel);
 router.get("/", getCommissionLevels);
 router.put("/:id", updateCommissionLevel);
-router.delete("/:id", deactivateCommissionLevel);
+router.patch("/:id/deactivate", deactivateCommissionLevel);
 
 export default router;
